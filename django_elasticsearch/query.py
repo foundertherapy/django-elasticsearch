@@ -144,11 +144,6 @@ class EsQueryset(QuerySet):
             mapping = self.model.es.get_mapping()
 
             for field, value in self.filters.items():
-                try:
-                    value = value.lower()
-                except AttributeError:
-                    pass
-
                 field, operator = self.sanitize_lookup(field)
 
                 try:
