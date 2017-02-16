@@ -156,6 +156,9 @@ class EsQueryset(QuerySet):
                 if is_nested and isinstance(value, Model):
                     value = value.id
 
+                if operator == 'in':
+                    filtr = {'bool': {'must': [{'terms': {field_name: value}}]}}
+
                 if operator == 'exact':
                     filtr = {'bool': {'must': [{'term': {field_name: value}}]}}
 
@@ -313,7 +316,7 @@ class EsQueryset(QuerySet):
         return clone
 
     def sanitize_lookup(self, lookup):
-        valid_operators = ['exact', 'not', 'should', 'range', 'gt', 'lt', 'gte', 'lte', 'contains', 'isnull']
+        valid_operators = ['exact', 'not', 'should', 'range', 'gt', 'lt', 'gte', 'lte', 'contains', 'isnull', 'in']
         words = lookup.split('__')
         fields = [word for word in words if word not in valid_operators]
         # this is also django's default lookup type
