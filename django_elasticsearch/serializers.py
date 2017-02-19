@@ -150,6 +150,7 @@ class EsModelToJsonMixin(object):
     def format(self, instance):
         # from a model instance to a dict
         fields = self.model.es.get_fields()
+        fields.extend(instance.Elasticsearch.property_fields)
         obj = dict([(field, self.serialize_field(instance, field))
                     for field in fields])
 

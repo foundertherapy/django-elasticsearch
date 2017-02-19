@@ -37,6 +37,7 @@ class EsIndexable(Model):
         suggest_fields = None
         # http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters-completion.html
         completion_fields = None
+        property_fields = []
 
     def __init__(self, *args, **kwargs):
         super(EsIndexable, self).__init__(*args, **kwargs)
@@ -83,7 +84,7 @@ def es_syncdb_callback(sender, app=None, created_models=[], **kwargs):
         models = sender.get_models()
     else:
         models = created_models
-    
+
     for model in models:
         if issubclass(model, EsIndexable):
             model.es.create_index()

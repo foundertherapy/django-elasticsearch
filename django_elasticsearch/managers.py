@@ -244,7 +244,7 @@ class ElasticsearchManager():
     def get_fields(self):
         model_fields = [f.name for f in self.model._meta.fields +
                         self.model._meta.many_to_many]
-
+        model_fields.extend(self.model.Elasticsearch.property_fields)
         return self.model.Elasticsearch.fields or model_fields
 
     def make_mapping(self):
