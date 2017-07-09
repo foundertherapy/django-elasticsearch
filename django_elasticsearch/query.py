@@ -129,14 +129,25 @@ class EsQueryset(QuerySet):
             fuzziness = self.fuzziness
 
         if self._query:
-            search['query'] = {
-                'match': {
-                    '_all': {
-                        'query': self._query,
-                        'fuzziness': fuzziness
+            match_all = True
+            if hasattr(self.model.Elasticsearch, 'match_substring'):
+                match_all = not self.model.Elasticsearch.match_substring
+            if match_all:
+                search['query'] = {
+                    'match': {
+                        '_all': {
+                            'query': self._query,
+                            'fuzziness': fuzziness
+                        }
+                    },
+                }
+            else:
+                search['query'] = {
+                    'query_string': {
+                        'fields': self.model.Elasticsearch.query_string_fields,
+                        'query': '*{}*'.format(self._query)
                     }
-                },
-            }
+                }
 
         if self.filters:
             # TODO: should we add _cache = true ?!
